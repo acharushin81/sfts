@@ -21,12 +21,13 @@
                 
                 <div class="col-4">
                     <div id="tblGovernmentList_filter" class="dataTables_filter">
-                        <label>Year : 
+                        <label>
                             {{ Form::number('year', request()->year, [
                                                             'class' => 'form-control input-sm input-small input-inline', 
-                                                            'min' => '2000', 
+                                                            'min' => '1990', 
                                                             'max' => '2018']) 
                             }}
+                            Year
                         </label>
                     </div>
                 </div>
@@ -42,7 +43,7 @@
                     </div>
                 </div>
                 <div class="col-4">
-                    <div id="tblGovernmentList_filter" class="dataTables_filter">
+                    <div id="tblGovernmentList_filter" class="dataTables_filter text-right">
                         <label>Search : 
                         {{ Form::text('keyword', request()->keyword , ['class' => 'form-control input-sm input-small input-inline']) }}
                         </label>
@@ -56,12 +57,9 @@
                         <tr role="row">
                             <th class="sorting" style="width: 50px;">SN</th>
                             <th class="sorting" style="width: 200px;">Organization Name</th>
-                            <th class="sorting">Month/Year</th>
+                            <th class="sorting" style="width: 200px;">Month/Year</th>
                             <th class="sorting">Submission Status</th>
-                            <th class="sorting">Submission Date</th>
-                            <th class="sorting">Download Status</th>
-                            <th class="sorting">Download Date</th>
-                            <th class="sorting">Action Menu</th>
+                            <th class="sorting">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,9 +80,6 @@
                             </td>
                             <td>{{ $submission->month }}/{{ $submission->year }}</td>
                             <td>{{ $submission->status }}</td>
-                            <td>{{ $submission->updated_at }}</td>
-                            <td>{{ $submission->download_status }}</td>
-                            <td>{{ $submission->download_date }}</td>
                             <td>
                                 <div class="dropdown show">
                                     <a class="btn btn-theme dropdown-toggle md-skip btn-xs" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -92,7 +87,7 @@
                                     </a>
 
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="#">View Submission</a>
+                                        <a class="dropdown-item" href="{{ route('submission.show', $submission->id) }}">View Submission</a>
                                         <a class="dropdown-item" href="{{ route('submission.edit', $submission->id) }}">Edit Submission</a>
                                     </div>
                                 </div>
@@ -102,12 +97,18 @@
                     </tbody>
                 </table>
             </div>
-            <div>
-                Showing {{($submissions->currentpage()-1)*$submissions->perpage()+1}} to {{$submissions->currentpage()*$submissions->perpage()}}
-                of  {{$submissions->total()}} entries
+            <div class="row">
+                <div class="col-4">
+                    <div class="pt-2">Showing {{($submissions->currentpage()-1)*$submissions->perpage()+1}} to {{$submissions->currentpage()*$submissions->perpage()}}
+                    of  {{$submissions->total()}} entries</div>
+                    
+                </div>
+                <div class="col-8">
+                    <div class="float-right">
+                        {{ $submissions->links() }}
+                    </div>
+                </div>
             </div>
-
-            {{ $submissions->links() }}
             
         </div>
     </div>

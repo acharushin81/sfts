@@ -29,6 +29,7 @@ class SubmissionController extends Controller
         $input = $request->all();
         
         $querySubmission = Submission::with('organization');
+        $querySubmission->where('organization_id', Account::where('email', Auth::user()->email)->get()[0]->organization_id);
         if (!empty($input['year']))
         {
             $querySubmission->where('year', $input['year']);
@@ -86,40 +87,25 @@ class SubmissionController extends Controller
 
     public function show($id)
     {
-        //
+        $submission = Submission::find($id);
+        $organization = Account::where('email', Auth::user()->email)->get()[0]->organization->name;
+        return view('submission/show', ['organization' => $organization, 'submission' => $submission]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $submission = Submission::find($id);
         $organization = Account::where('email', Auth::user()->email)->get()[0]->organization->name;
-        return view('submission/edit', ['organizations' => $organizations, 'submission' => $submission]);
+        return view('submission/edit', ['organization' => $organization, 'submission' => $submission]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         //

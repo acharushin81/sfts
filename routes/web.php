@@ -26,6 +26,7 @@ Route::prefix('admin')->group(function() {
         'as' => 'admin'
     ]);
     Route::get('submission/search', 'Admin\SubmissionController@search')->name('admin.submission.search');
+    Route::get('submission/{submission}/download', 'Admin\SubmissionController@download')->name('admin.submission.download');
     Route::resource('submission', 'Admin\SubmissionController', [
         'as' => 'admin'
     ]);
@@ -37,4 +38,3 @@ Route::get('submission/search', 'SubmissionController@search')->name('submission
 Route::resource('submission', 'SubmissionController');
 
 Auth::routes();
-

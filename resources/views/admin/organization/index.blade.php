@@ -18,10 +18,8 @@
         <div id="tblGovernmentList_wrapper" class="dataTables_wrapper no-footer">
             {!! Form::open(['route' => 'admin.organization.search', 'method' => 'get']) !!}
             <div class="row">
-                <div class="col-md-6 col-sm-12">
-                </div>
-                <div class="col-md-6 col-sm-12">
-                    <div id="tblGovernmentList_filter" class="dataTables_filter">
+                <div class="col-12">
+                    <div id="tblGovernmentList_filter" class="dataTables_filter text-right">
                         <label>Search : {{ Form::text('keyword', request()->keyword , ['class' => 'form-control input-sm input-small input-inline']) }}
                         </label>
                     </div>
@@ -32,8 +30,8 @@
                 <table class="table table-bordered v-middle dataTable no-footer dtr-inline" id="tblGovernmentList" role="grid" aria-describedby="tblGovernmentList_info">
                     <thead class="red-th">
                         <tr role="row">
-                            <th class="sorting" style="width: 50px;">SN</th>
-                            <th class="sorting" style="width: 200px;">Organization Name</th>
+                            <th class="sorting" style="width: 40px;">SN</th>
+                            <th class="sorting" style="width: 180px;">Organization Name</th>
                             <th class="sorting">Email1</th>
                             <th class="sorting">Email2</th>
                             <th class="sorting">Email3</th>
@@ -68,11 +66,20 @@
                     </tbody>
                 </table>
             </div>
-            <div>
-                Showing {{($organizations->currentpage()-1)*$organizations->perpage()+1}} to {{$organizations->currentpage()*$organizations->perpage()}}
-                of  {{$organizations->total()}} entries
+            <div class="row">
+                <div class="col-4">
+                    <div class="pt-2">
+                        Showing {{($organizations->currentpage()-1)*$organizations->perpage()+1}} to {{$organizations->currentpage()*$organizations->perpage()}}
+                        of  {{$organizations->total()}} entries
+                    </div>
+                    
+                </div>
+                <div class="col-8">
+                    <div class="float-right">
+                    {{ $organizations->links() }}
+                    </div>
+                </div>
             </div>
-            {{ $organizations->links() }}
         </div>
     </div>
 </div>

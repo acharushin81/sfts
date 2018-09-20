@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Organization;
 use App\Submission;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class SubmissionController extends Controller
 {
@@ -60,47 +62,52 @@ class SubmissionController extends Controller
         return view('admin.submission.create', ['organizations' => $organizations]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'organization' => 'required',
+            'year' => 'required|uniqueYearAndMonth:'.$data['month'].', '.$data['organization'],
+            'month' => 'required',
+            'file' => 'required',
+        ]);
+    }
+
     public function store(Request $request)
     {
         $input = $request->all();
+
+        $this->validator($input)->validate();
+
         $submission = new Submission;
         $submission->organization_id = $input['organization'];
         $submission->year = $input['year'];
         $submission->month = $input['month'];
         $submission->status = "Submitted";
-        // $submission->month = $request->file('file')->store('files');
+        $submission->file = $request->file('file')->store('files');
         $submission->save();
         return redirect(route('admin.submission.index'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
     {
         $submission = Submission::find($id);
         $organizations = Organization::all()->pluck('name', 'id');
-        return view('admin.submission.edit', ['organizations' => $organizations, 'submission' => $submission]);
+        return view('admin.submission.show', ['organizations' => $organizations, 'submission' => $submission]);
+    }
+
+    public function download($id)
+    {
+        $submission = Submission::find($id);
+        $file = $submission->file;
+        $submission->download_status = "Downloaded";
+        $submission->download_date = date("Y-m-d h:i:s a", time());
+        $submission->save();
+        return Storage::download($file);
+    }
+
+    public function edit($id)
+    {
+        
     }
 
     /**

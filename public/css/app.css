@@ -10845,12 +10845,7 @@ select.input-sm {
   line-height: 30px;
 }
 
-div.dataTables_wrapper div.dataTables_filter {
-  text-align: right;
-}
-
 div.dataTables_wrapper div.dataTables_filter input {
-  margin-left: 0.5em;
   display: inline-block;
   width: auto;
 }
@@ -10868,5 +10863,50 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .table .red-th > tr > th {
   color: #c00001;
+}
+
+.table th,
+.table td {
+  padding: 0.43rem;
+}
+
+.select2-container--default .select2-selection--single {
+  border-radius: 0;
+}
+
+.select2-container--default .select2-selection--single {
+  height: 40px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 40px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  top: 7px;
+}
+
+.page-item.active .page-link {
+  background-color: #2C8968;
+  border-color: #2C8968dc;
+}
+
+.page-link {
+  padding: 5px 12px;
+}
+
+.page-item .page-link {
+  border-radius: 0 0 0 0 !important;
+}
+
+.page-item span,
+.page-item a {
+  padding: 5px 12px;
+  width: 3.25em;
+  text-align: center;
+}
+
+.page-item.active span {
+  width: 2.5em;
 }
 

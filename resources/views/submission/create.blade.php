@@ -28,7 +28,7 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('year', 'Year') }}
-                        {{ Form::number('year', '', ['class' => 'form-control'.($errors->has('year') ? ' is-invalid' : ''), 'placeholder' => 'Select Year', 'min' => '2000', 'max' => '2018']) }}
+                        {{ Form::selectRange('year', 2000, 2030, '',  ['class' => 'form-control'.($errors->has('year') ? ' is-invalid' : ''), 'placeholder' => 'Select Year']) }}
                         @if ($errors->has('year'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('year') }}</strong>
@@ -39,7 +39,7 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('month', 'Month') }}
-                        {{ Form::number('month', '', ['class' => 'form-control'.($errors->has('month') ? ' is-invalid' : ''), 'placeholder' => 'Select Month', 'min' => '1', 'max' => '12']) }}
+                        {{ Form::selectMonth('month', '', ['class' => 'form-control'.($errors->has('month') ? ' is-invalid' : ''), 'placeholder' => 'Select Month']) }}
                         @if ($errors->has('month'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('month') }}</strong>
@@ -52,7 +52,7 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('file', 'File Upload') }}
-                        {{ Form::file('file', ['id' => 'file', 'class' => 'form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
+                        {{ Form::file('file', ['accept' => '.xlsx, .csv, .xls', 'id' => 'file', 'class' => 'form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
                         @if ($errors->has('file'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('file') }}</strong>
