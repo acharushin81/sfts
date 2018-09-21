@@ -9,7 +9,7 @@ use Route;
 
 class LoginController extends Controller
 {
-   
+  protected $guard = 'admin';
     public function __construct()
     {
       $this->middleware('guest:admin', ['except' => ['logout']]);

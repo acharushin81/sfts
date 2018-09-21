@@ -13,7 +13,7 @@ class SubmissionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth:web');
     }
 
     public function index()
@@ -102,7 +102,18 @@ class SubmissionController extends Controller
 
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->all();
+
+        $this->validator($input)->validate();
+        
+        $submission = Submission::find($id);
+        $submission->organization_id = Account::where('email', Auth::user()->email)->get()[0]->organization_id;
+        $submission->year = $input['year'];
+        $submission->month = $input['month'];
+        $submission->status = "Submitted";
+        $submission->file = $request->file('file')->store('files');
+        $submission->save();
+        return redirect(route('submission.index'));
     }
 
 

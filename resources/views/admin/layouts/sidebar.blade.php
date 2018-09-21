@@ -10,7 +10,7 @@
                 <a href="{{ route('admin.organization.index') }}"><i class="fa fa-angle-right"></i> Organization</a>
             </li>
             <li>
-                <a href="{{ route('admin.submission.index') }}"><i class="fa fa-angle-right"></i>  Submissions</a>
+            <a href="{{ route('admin.submission.index') }}"><i class="fa fa-angle-right"></i>  Submissions</a>
             </li>
         </ul>
     </div>

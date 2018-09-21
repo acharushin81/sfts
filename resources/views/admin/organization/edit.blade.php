@@ -20,43 +20,48 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('name', 'Organization Name') }}
-                        {{ Form::text('name',  $organization->name, ['class' => 'form-control', 'placeholder' => 'Text, Unique']) }}
+                        {{ Form::text('name', old('name') == '' ? $organization->name : old('name') , ['class' => 'form-control'.($errors->has('name') ? ' is-invalid' : ''), 'placeholder' => 'Text, Unique', 'required']) }}
+                        @if ($errors->has('name'))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('name') }}</strong>
+                            </span>
+                        @endif
                     </div>
                 </div>
             </div>
-            @for ($i = 1; $i <= $organization->accounts->count(); $i ++)
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            {{ Form::label('email'.$i, 'Email '.$i) }}
-                            {{ Form::text('email'.$i, $organization->accounts->get($i-1)->email, ['class' => 'form-control', 'placeholder' => 'Enter email']) }}
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            {{ Form::label('password'.$i, 'Password '.$i) }}
-                            {{ Form::password('password'.$i, ['class' => 'form-control', 'placeholder' => 'Enter password']) }}
-                        </div>
-                    </div>
-                </div>
-            @endfor
-            @for ($index = $i; $index <= 3; $index ++)
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            {{ Form::label('email'.$index, 'Email '.$index) }}
-                            {{ Form::text('email'.$index, '', ['class' => 'form-control', 'placeholder' => 'Enter email']) }}
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                        {{ Form::label('password'.$index, 'Password '.$index) }}
-                            {{ Form::password('password'.$index, ['class' => 'form-control', 'placeholder' => 'Enter password']) }}
-                        </div>
+            @foreach (range(1, 3) as $i)
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ Form::label('email', 'Email '.$i) }}
+                        {{ Form::text(  'emails[]', 
+                                        old('emails.'.$i) == '' ? (isset($organization->accounts[$i-1]) ? $organization->accounts[$i-1]->email : '') : old('emails.'.$i), 
+                                        [
+                                            'class' => 'form-control'.($errors->has('emails.'.$i) ? ' is-invalid' : ''), 
+                                            'placeholder' => 'Enter email'
+                                        ]
+                                    ) 
+                        }}
+                        @if ($errors->has('emails.'.$i))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('emails.'.$i) }}</strong>
+                            </span>
+                        @endif
                     </div>
                 </div>
-            @endfor
-            
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        {{ Form::label('password', 'Password '.$i) }}
+                        {{ Form::password('passwords[]', ['class' => 'form-control'.($errors->has('passwords.'.$i) ? ' is-invalid' : ''), 'placeholder' => 'Enter password']) }}
+                        @if ($errors->has('passwords.'.$i))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('passwords.'.$i) }}</strong>
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
             <div class="row">
                 <div class="text-right col-sm-12">
                     <div class="form-group">

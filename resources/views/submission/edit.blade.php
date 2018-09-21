@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="portlet-body">
-        {!! Form::open(['route' => ['submission.update', $submission->id], 'method' => 'put']) !!}
+        {!! Form::open(['route' => ['submission.update', $submission->id], 'method' => 'put', 'files' => true]) !!}
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -28,13 +28,28 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('year', 'Year') }}
-                        {{ Form::number('year', $submission->year, ['class' => 'form-control', 'placeholder' => 'Select Year', 'min' => '2000', 'max' => '2018']) }}
+                        <div class="btn-group bootstrap-select form-control bs-select">
+                        {{ Form::selectRange('year', 2018, 2019, $submission->year,  ['class' => 'form-control bs-select'.($errors->has('year') ? ' is-invalid' : '')]) }}
+                        </div>
+                        @if ($errors->has('year'))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('year') }}</strong>
+                            </span>
+                        @endif
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('month', 'Month') }}
-                        {{ Form::number('month', $submission->month, ['class' => 'form-control', 'placeholder' => 'Select Month', 'min' => '1', 'max' => '12']) }}
+                        <div class="btn-group bootstrap-select form-control bs-select">                            
+                            {{ Form::selectMonth('month', $submission->month, ['class' => 'form-control bs-select'.($errors->has('month') ? ' is-invalid' : '')]) }}
+                        </div>
+                        
+                        @if ($errors->has('month'))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('month') }}</strong>
+                            </span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -42,7 +57,17 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('file', 'File Upload') }}
-                        {{ Form::file('file', ['class' => 'form-control', 'placeholder' => 'Upload File']) }}
+                        <div class="form-inline">
+                            {{ Form::text('file_name', '', ['class' => 'form-control', 'disabled', 'id' => 'file-name']) }}
+                            {{ Form::button('Select file', ['class' => 'form-control', 'id' => 'file-open']) }}
+                            {{ Form::file('file', ['accept' => '.xlsx, .csv, .xls', 'id' => 'file', 'class' => 'hidden form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
+                            <br>
+                            @if ($errors->has('file'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('file') }}</strong>
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -57,4 +82,14 @@
         {!! Form::close() !!}
     </div>
 </div>
+<script>
+    $('#file-open').click(function() {
+        $('#file').trigger('click');
+    });
+
+    $('#file').change(function(e){
+        var fileName = e. target. files[0]. name;
+        $('#file-name').val(fileName);
+    });
+</script>
 @endsection

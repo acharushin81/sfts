@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="row">
-        <div class="col-3">
+        <div class="col-sm-3">
             @include('layouts.sidebar')
         </div>
-        <div class="col-9">
+        <div class="col-sm-9">
             @yield('main-page')
         </div>
     </div>

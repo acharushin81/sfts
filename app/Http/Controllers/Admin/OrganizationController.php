@@ -40,16 +40,8 @@ class OrganizationController extends Controller
         return view('admin.organization.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
     protected function validator(array $data)
     {
-        $result = [];
         return Validator::make($data, [
             'name' => 'required|string|min:6|max:255',
             'emails.*' => 'email|nullable|distinct',
@@ -64,7 +56,7 @@ class OrganizationController extends Controller
         $input = $request->all();
 
         $this->validator($input)->validate();
-       //Create seller
+
         $organization = new Organization;
         $organization->name = $input['name'];
         $organization->save();
@@ -84,68 +76,51 @@ class OrganizationController extends Controller
         return redirect(route('admin.organization.index'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         $organization = Organization::find($id);
         return view('admin.organization.edit', ['organization' => $organization]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $input = $request->all();
+
+        $this->validator($input)->validate();
+
         
         $organization = Organization::find($id);
         $organization->name = $input['name'];
         $organization->save();
 
-        if (!is_null($input['email1']) && !is_null($input['password1'])) {
-            $account = new Account(['email' => $input['email1'], 'password' => $input['password1']]);
-            $organization->accounts()->save($account);
-        }
-        if (!is_null($input['email2']) && !is_null($input['password2'])) {
-            $account = new Account(['email' => $input['email2'], 'password' => $input['password2']]);
-            $organization->accounts()->save($account);
-        }
-        if (!is_null($input['email3']) && !is_null($input['password3'])) {
-            $account = new Account(['email' => $input['email3'], 'password' => $input['password3']]);
+        $i = 0;
+        foreach ($input['emails'] as $email) {
+            if ($i == 0)
+            {
+                $user = User::where('email', $input['emails'][$i])->first();
+                if ($user == null)
+                {
+                    $user = new User(['email' => $input['emails'][$i], 'password' => bcrypt($input['passwords'][$i])]);
+                }
+                else
+                {
+                    $user->password = bcrypt($input['passwords'][$i]);
+                }
+                $user->save();
+                $i ++;
+            }
+            $account = new Account(['email' => $email, 'password' => $input['passwords'][$i]]);
             $organization->accounts()->save($account);
         }
 
         return redirect(route('admin.organization.index'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
     }
 }

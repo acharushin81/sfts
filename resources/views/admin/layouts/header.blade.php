@@ -10,6 +10,7 @@
             <ul>
             @guest
             @else
+                @if(Auth::user()->isAdmin())
                 <li>
                     <a href="#" role="button">
                         {{ Auth::user()->email }} <span class="caret"></span>
@@ -25,6 +26,7 @@
                         @csrf
                     </form>
                 </li>
+                @endif
             @endguest
             </ul>
         </div>

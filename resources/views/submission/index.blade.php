@@ -17,47 +17,38 @@
     <div class="portlet-body">
         <div id="tblGovernmentList_wrapper" class="dataTables_wrapper no-footer">
             {!! Form::open(['route' => 'submission.search', 'method' => 'get', 'id' => 'search_form']) !!}
-            <div class="row">
-                
-                <div class="col-4">
-                    <div id="tblGovernmentList_filter" class="dataTables_filter">
-                        <label>
-                            {{ Form::number('year', request()->year, [
-                                                            'class' => 'form-control input-sm input-small input-inline', 
-                                                            'min' => '1990', 
-                                                            'max' => '2018']) 
-                            }}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="dataTables_length" id="tblSearchBusinessList_length">
+                            <label>  
+                            {{ Form::select('year', ['2018' => '2018', '2019' => '2019'], request()->year, ['class' => 'form-control input-sm input-small input-inline', 'placeholder' => '']) }}
                             Year
-                        </label>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="tblSearchBusinessList_filter" class="dataTables_filter">
+                            <label>Month : 
+                            {{ Form::selectMonth('month', request()->month, ['class' => 'form-control input-sm input-small input-inline', 'placeholder' => '']) }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="tblSearchBusinessList_filter" class="dataTables_filter">
+                            <label>Search : 
+                                {{ Form::text('keyword', request()->keyword , ['class' => 'form-control input-sm input-small input-inline']) }}
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div id="tblGovernmentList_filter" class="dataTables_filter">
-                        <label>Month : 
-                        {{ Form::number('month', request()->month, [
-                                                        'class' => 'form-control input-sm input-small input-inline',  
-                                                        'min' => '1', 
-                                                        'max' => '12']) 
-                        }}
-                        </label>
-                    </div>
-                </div>
-                <div class="col-4">
-                    <div id="tblGovernmentList_filter" class="dataTables_filter text-right">
-                        <label>Search : 
-                        {{ Form::text('keyword', request()->keyword , ['class' => 'form-control input-sm input-small input-inline']) }}
-                        </label>
-                    </div>
-                </div>
-            </div>
             {!! Form::close() !!}
             <div class="table-scrollable">
                 <table class="table table-bordered v-middle dataTable no-footer dtr-inline" id="tblGovernmentList">
                     <thead class="red-th">
                         <tr role="row">
                             <th class="sorting" style="width: 50px;">SN</th>
-                            <th class="sorting" style="width: 200px;">Organization Name</th>
-                            <th class="sorting" style="width: 200px;">Month/Year</th>
+                            <th class="sorting">Organization Name</th>
+                            <th class="sorting text-right">Month/Year</th>
                             <th class="sorting">Submission Status</th>
                             <th class="sorting">Action</th>
                         </tr>
@@ -66,30 +57,28 @@
                     @foreach ($submissions as $key=> $submission)
                         <tr role="row" class="odd">
                             <td>
-                                @if ($loop->index == 0)
-                                    {{ $loop->index + 1 }}
-                                @endif
+                                {{ ($submissions->currentpage()-1)*$submissions->perpage() + $loop->index + 1 }}
                             </td>   
                             <td>
-                                @if ($loop->index == 0)
                                     {{ $submission->organization->name }}
-                                @endif
-                                @if ($loop->index >= 1 && $submission->organization->name != $submissions[$loop->index-1]->organization->name)
-                                    {{ $submission->organization->name }}
-                                @endif
                             </td>
-                            <td>{{ $submission->month }}/{{ $submission->year }}</td>
+                            <td class="text-right">{{  DateTime::createFromFormat('!m', $submission->month)->format('F') }} {{ $submission->year }}</td>
                             <td>{{ $submission->status }}</td>
                             <td>
-                                <div class="dropdown show">
-                                    <a class="btn btn-theme dropdown-toggle md-skip btn-xs" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Actions
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item" href="{{ route('submission.show', $submission->id) }}">View Submission</a>
-                                        <a class="dropdown-item" href="{{ route('submission.edit', $submission->id) }}">Edit Submission</a>
-                                    </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-theme btn-xs md-skip dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Action <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('submission.show', $submission->id) }}">View Submission</a>
+                                        </li>
+                                        @if ($submission->download_status != "Downloaded")
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('submission.edit', $submission->id) }}">Edit Submission</a>
+                                        </li>
+                                        @endif
+                                    </ul>
                                 </div>
                             </td>
                         </tr>
@@ -98,18 +87,29 @@
                 </table>
             </div>
             <div class="row">
-                <div class="col-4">
-                    <div class="pt-2">Showing {{($submissions->currentpage()-1)*$submissions->perpage()+1}} to {{$submissions->currentpage()*$submissions->perpage()}}
-                    of  {{$submissions->total()}} entries</div>
+                <div class="col-sm-4">
+                    <div class="pt-2">
+                        Showing 
+                        @if (($submissions->currentpage()-1)*$submissions->perpage()+1 > $submissions->total())
+                            {{ $submissions->total() }}
+                        @else
+                            {{ ($submissions->currentpage()-1)*$submissions->perpage()+1 }} 
+                        @endif
+                        to 
+                        @if ($submissions->currentpage()*$submissions->perpage() > $submissions->total())
+                            {{ $submissions->total() }}
+                        @else
+                            {{ $submissions->currentpage()*$submissions->perpage() }}
+                        @endif
+                        of  {{ $submissions->total() }} entries</div>
                     
                 </div>
-                <div class="col-8">
-                    <div class="float-right">
+                <div class="col-sm-8">
+                    <div class="pull-right">
                         {{ $submissions->links() }}
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </div>
@@ -124,15 +124,12 @@
             $('#search_form').submit();
         }
     });
-    $("input[name='year']").keypress(function( event ) {
-        if ( event.which == 13 ) {
-            $('#search_form').submit();
-        }
+    $( "select[name='year']" ).change(function() {
+        $('#search_form').submit();
     });
-    $("input[name='month']").keypress(function( event ) {
-        if ( event.which == 13 ) {
-            $('#search_form').submit();
-        }
+    
+    $( "select[name='month']" ).change(function() {
+        $('#search_form').submit();
     });
 </script>
 @endsection

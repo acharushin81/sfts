@@ -33,7 +33,7 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     {{ Form::label('month', 'Month') }}
-                    {{ Form::number('month', $submission->month, ['class' => 'form-control', 'disabled']) }}
+                    {{ Form::selectMonth('month', $submission->month, ['class' => 'form-control', 'disabled']) }}
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
             <div class="col-sm-6">
                 <div class="form-group">
                     {{ Form::label('submission_date', 'Submission Date') }}
-                    {{ Form::text('submission_date', $submission->updated_at, ['class' => 'form-control', 'disabled']) }}
+                    {{ Form::text('submission_date', $submission->created_at, ['class' => 'form-control', 'disabled']) }}
                 </div>
             </div>
         </div>

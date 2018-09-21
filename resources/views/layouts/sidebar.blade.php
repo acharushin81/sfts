@@ -1,7 +1,7 @@
 <div class="portlet light compressed-menu">
     <div class="portlet-title">
         <div class="caption">
-            DASHBOARD
+            ERAS
         </div>
     </div>
     <div class="portlet-body">

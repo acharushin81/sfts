@@ -20,7 +20,9 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('organization', 'Organization Name') }}
-                        {{ Form::select('organization', $organizations, null, ['class' => 'form-control', 'placeholder' => 'Select Organization']) }}
+                        <div class="btn-group bootstrap-select form-control bs-select">                            
+                            {{ Form::select('organization', $organizations, null, ['class' => 'form-control bs-select'.($errors->has('organization') ? ' is-invalid' : ''), 'placeholder' => 'Select Organization']) }}
+                        </div>
                         @if ($errors->has('organization'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('organization') }}</strong>
@@ -33,7 +35,9 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('year', 'Year') }}
-                        {{ Form::selectRange('year', 2000, 2030, '',  ['class' => 'form-control'.($errors->has('year') ? ' is-invalid' : ''), 'placeholder' => 'Select Year']) }}
+                        <div class="btn-group bootstrap-select form-control bs-select">
+                            {{ Form::select('year', ['2018' => '2018', '2019' => '2019'], null, ['class' => 'form-control bs-select'.($errors->has('year') ? ' is-invalid' : ''), 'placeholder' => 'Select Year']) }}
+                        </div>
                         @if ($errors->has('year'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('year') }}</strong>
@@ -44,7 +48,10 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         {{ Form::label('month', 'Month') }}
-                        {{ Form::selectMonth('month', '', ['class' => 'form-control'.($errors->has('month') ? ' is-invalid' : ''), 'placeholder' => 'Select Month']) }}
+                        <div class="btn-group bootstrap-select form-control bs-select">                            
+                            {{ Form::selectMonth('month', '', ['class' => 'form-control bs-select'.($errors->has('month') ? ' is-invalid' : ''), 'placeholder' => 'Select Month']) }}
+                        </div>
+                        
                         @if ($errors->has('month'))
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $errors->first('month') }}</strong>
@@ -56,14 +63,21 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
-                        {{ Form::label('file', 'File Upload') }}
-                        {{ Form::file('file', ['accept' => '.xlsx, .csv, .xls', 'id' => 'file', 'class' => 'form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
-                        @if ($errors->has('file'))
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $errors->first('file') }}</strong>
-                            </span>
-                        @endif
+                        {{ Form::label('file', 'Upload File') }}
+                        <div class="form-inline">
+                            {{ Form::text('file_name', '', ['class' => 'form-control', 'disabled', 'id' => 'file-name']) }}
+                            {{ Form::button('Select file', ['class' => 'form-control', 'id' => 'file-open']) }}
+                            {{ Form::file('file', ['accept' => '.xlsx, .csv, .xls', 'id' => 'file', 'class' => 'hidden form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
+                            <br>
+                            @if ($errors->has('file'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('file') }}</strong>
+                                </span>
+                            @endif
+                        </div>
                     </div>
+                    
+
                 </div>
             </div>
             <div class="row">
@@ -78,8 +92,13 @@
     </div>
 </div>
 <script>
-    $('#organization').select2({
-        placeholder: 'Select an option'
+    $('#file-open').click(function() {
+        $('#file').trigger('click');
+    });
+
+    $('#file').change(function(e){
+        var fileName = e. target. files[0]. name;
+        $('#file-name').val(fileName);
     });
 </script>
 @endsection
