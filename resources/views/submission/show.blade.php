@@ -59,6 +59,14 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {{ Form::label('file', 'Uploaded File') }}
+                    <a href="{{ route('submission.download', $submission->id) }}" class="form-control">View Submitted File</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

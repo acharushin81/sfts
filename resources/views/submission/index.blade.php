@@ -5,6 +5,11 @@
     <h1>Submissions</h1>
     <hr>
 </div>
+@if (isset($data) && $data == 'create')
+    <div class="alert alert-success">
+        <strong>Success!</strong> Submission created.
+    </div>
+@endif
 <div class="portlet light">
     <div class="portlet-title">
         <div class="caption">

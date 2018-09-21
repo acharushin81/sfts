@@ -32,9 +32,7 @@
                         <tr role="row">
                             <th class="sorting">SN</th>
                             <th class="sorting">Organization Name</th>
-                            <th class="sorting">Email1</th>
-                            <th class="sorting">Email2</th>
-                            <th class="sorting">Email3</th>
+                            <th class="sorting">Email</th>
                             <th class="sorting">Action</th>
                         </tr>
                     </thead>
@@ -43,18 +41,16 @@
                             <tr role="row" class="odd">
                                 <td>{{ ($organizations->currentpage()-1)*$organizations->perpage() + 1 + $loop->index }}</td>
                                 <td>{{ $organization->name }}</td>
-                                @foreach ($organization->accounts as $account)
-                                    <td>{{ $account->email }}</td>
-                                @endforeach
-                                @for ($i = 0; $i < 3 - $organization->accounts->count(); $i++)
-                                    <td></td>
-                                @endfor
+                                <td>{{ $organization->accounts[0]->email }}</td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-theme btn-xs md-skip dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Action <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('admin.organization.show', $organization->id) }}">View Organization</a>
+                                            </li>
                                             <li>
                                                 <a class="dropdown-item" href="{{ route('admin.organization.edit', $organization->id) }}">Edit Organization</a>
                                             </li>

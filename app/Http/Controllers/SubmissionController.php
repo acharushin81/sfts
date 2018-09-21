@@ -8,6 +8,9 @@ use App\Submission;
 use App\Account;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+
 
 class SubmissionController extends Controller
 {
@@ -18,10 +21,12 @@ class SubmissionController extends Controller
 
     public function index()
     {
+        $data = Session::get('data');
+        
         $querySubmission = Submission::query();
         $querySubmission->where('organization_id', Account::where('email', Auth::user()->email)->get()[0]->organization_id);
         
-        return view('submission/index', ['submissions' => $querySubmission->paginate(5)]);
+        return view('submission/index', ['submissions' => $querySubmission->paginate(5), 'data' => $data]);
     }
 
     public function search(Request $request)
@@ -61,11 +66,15 @@ class SubmissionController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'organization' => 'required',
-            'year' => 'required|uniqueYearAndMonth:'.$data['month'].', '.Account::where('email', Auth::user()->email)->get()[0]->organization_id,
-            'month' => 'required',
-            'file' => 'required',
-        ]);
+                'organization' => 'required',
+                'year' => 'required|uniqueYearAndMonth:'.$data['month'].', '.Account::where('email', Auth::user()->email)->get()[0]->organization_id,
+                'month' => 'required',
+                'file' => 'required',
+            ],
+            [
+                'unique_year_and_month' => 'Submission cannot be duplicate.'
+            ]
+        );
     }
 
     public function store(Request $request)
@@ -81,9 +90,15 @@ class SubmissionController extends Controller
         $submission->status = "Submitted";
         $submission->file = $request->file('file')->store('files');
         $submission->save();
-        return redirect(route('submission.index'));
+        return redirect()->route('submission.index')->with('data', 'create');
     }
 
+    public function download($id)
+    {
+        $submission = Submission::find($id);
+        $file = $submission->file;
+        return Storage::download($file);
+    }
 
     public function show($id)
     {
@@ -104,15 +119,20 @@ class SubmissionController extends Controller
     {
         $input = $request->all();
 
-        $this->validator($input)->validate();
+        Validator::make($input, [
+                'file' => 'required']
+        )->validate();
         
-        $submission = Submission::find($id);
+        Submission::find($id)->delete();
+        Submission::where('year', $input['year'])->where('month', $input['month'])->delete();
+        $submission = new Submission;
         $submission->organization_id = Account::where('email', Auth::user()->email)->get()[0]->organization_id;
         $submission->year = $input['year'];
         $submission->month = $input['month'];
         $submission->status = "Submitted";
         $submission->file = $request->file('file')->store('files');
         $submission->save();
+
         return redirect(route('submission.index'));
     }
 

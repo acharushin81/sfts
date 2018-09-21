@@ -37,9 +37,14 @@
                                         ]
                                     ) 
                         }}
-                        @if ($errors->has('emails.'.$i))
+                        @if ($errors->has('emails.'.($i-1)))
                             <span class="invalid-feedback" role="alert">
-                                <strong>{{ $errors->first('emails.'.$i) }}</strong>
+                                <strong>{{ $errors->first('emails.'.($i-1)) }}</strong>
+                            </span>
+                        @endif
+                        @if ($i == 1 && $errors->has('email'))
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $errors->first('email') }}</strong>
                             </span>
                         @endif
                     </div>
@@ -48,9 +53,9 @@
                     <div class="form-group">
                         {{ Form::label('password', 'Password '.$i) }}
                         {{ Form::password('passwords[]', ['class' => 'form-control'.($errors->has('passwords.'.$i) ? ' is-invalid' : ''), 'placeholder' => 'Enter password']) }}
-                        @if ($errors->has('passwords.'.$i))
+                        @if ($errors->has('passwords.'.($i-1)))
                             <span class="invalid-feedback" role="alert">
-                                <strong>{{ $errors->first('passwords.'.$i) }}</strong>
+                                <strong>{{ $errors->first('passwords.'.($i-1)) }}</strong>
                             </span>
                         @endif
                     </div>

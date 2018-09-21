@@ -42,13 +42,20 @@ class OrganizationController extends Controller
 
     protected function validator(array $data)
     {
+        $data['email'] = $data['emails'][0];
         return Validator::make($data, [
-            'name' => 'required|string|min:6|max:255',
-            'emails.*' => 'email|nullable|distinct',
-            'emails.0' => 'required|email',
-            'passwords.*' => 'string|min:6|nullable',
-            'passwords.0' => 'required',
-        ]);
+                'name' => 'required|string|min:6|max:255',
+                'emails.*' => 'email|nullable|distinct',
+                'emails.0' => 'required|email',
+                'email' => 'unique:users',
+                'passwords.*' => 'string|min:6|nullable',
+                'passwords.0' => 'required',
+            ],
+            [
+                'emails.0.required' => 'Email Required',
+                'passwords.0.required' => 'Password Required',
+            ]
+        );
     }
 
     public function store(Request $request)
@@ -78,6 +85,8 @@ class OrganizationController extends Controller
 
     public function show($id)
     {
+        $organization = Organization::find($id);
+        return view('admin.organization.show', ['organization' => $organization]);
     }
 
     public function edit($id)
@@ -98,6 +107,7 @@ class OrganizationController extends Controller
         $organization->save();
 
         $i = 0;
+        $organization->accounts()->delete();
         foreach ($input['emails'] as $email) {
             if ($i == 0)
             {
@@ -113,7 +123,15 @@ class OrganizationController extends Controller
                 $user->save();
                 $i ++;
             }
-            $account = new Account(['email' => $email, 'password' => $input['passwords'][$i]]);
+            $account = Account::where('email', $email)->first();
+            if ($account == null)
+            {
+                $account = new Account(['email' => $email, 'password' => bcrypt($input['passwords'][$i])]);
+            }
+            else
+            {
+                $account->password = bcrypt($input['passwords'][$i]);
+            }
             $organization->accounts()->save($account);
         }
 

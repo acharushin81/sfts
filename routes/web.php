@@ -35,6 +35,7 @@ Route::prefix('admin')->group(function() {
 
 Route::resource('organization', 'OrganizationController');
 Route::get('submission/search', 'SubmissionController@search')->name('submission.search');
+Route::get('submission/{submission}/download', 'SubmissionController@download')->name('submission.download');
 Route::resource('submission', 'SubmissionController');
 
 Auth::routes();
