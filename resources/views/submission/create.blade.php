@@ -60,7 +60,7 @@
                         <div class="form-inline">
                             {{ Form::text('file_name', '', ['class' => 'form-control', 'disabled', 'id' => 'file-name']) }}
                             {{ Form::button('Select file', ['class' => 'form-control', 'id' => 'file-open']) }}
-                            {{ Form::file('file', ['accept' => '.csv, .xls', 'id' => 'file', 'class' => 'hidden form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
+                            {{ Form::file('file', ['accept' => '.csv, .xls, .xlsx', 'id' => 'file', 'class' => 'hidden form-control'.($errors->has('file') ? ' is-invalid' : ''), 'placeholder' => 'Upload File']) }}
                             <br>
                             @if ($errors->has('file'))
                                 <span class="invalid-feedback" role="alert">
